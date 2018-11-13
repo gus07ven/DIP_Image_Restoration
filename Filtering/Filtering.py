@@ -68,3 +68,51 @@ class Filtering:
                         multipleValue *= mask[l][m]
                 newImg[j][i] = int(math.pow(multipleValue, windowSize**(-2))+0.5)
         return newImg
+
+    def harmonic_mean_filter(self, img, windowSize = 3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        # mask = np.zeros((3, 3), np.uint8)
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                denominator = 0.0
+                for l in range(windowSize):
+                    for m in range(windowSize):
+                        if mask[l][m] != 0:
+                            denominator += 1/(mask[l][m])
+                newImg[j][i] = int((windowSize ** 2)/denominator +0.5)
+        return newImg
+
+    def contraharmonic_mean_filter(self, img, Qpara, windowSize = 3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        # mask = np.zeros((3, 3), np.uint8)
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                valueNom = 0.0
+                valueDen = 0.0
+                for l in range(windowSize):
+                    for m in range(windowSize):
+                        if mask[l][m] != 0:
+                            if Qpara+1 >= 0:
+                                valueNom += math.pow(mask[l][m], Qpara + 1)
+                            else:
+                                valueNom += 1/math.pow(mask[l][m], -(Qpara+1))
+                            if Qpara >= 0:
+                                valueDen += math.pow(mask[l][m], Qpara)
+                            else:
+                                valueDen += 1/math.pow(mask[l][m], -Qpara)
+                newImg[j][i] = int(valueNom/valueDen + 0.5)
+        return newImg
