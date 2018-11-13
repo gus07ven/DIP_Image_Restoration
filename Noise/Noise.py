@@ -49,7 +49,7 @@ if  __name__ == "__main__":
     type = input("enter your choice \n")
     img = cv2.imread("C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\homework-3-ani4991\\Lenna.png")
     noisy_img = noisy(type,img)
-    print(noisy_img.shape)
+
 
     cv2.imshow('noisy_image',noisy_img)
     cv2.waitKey(0)
