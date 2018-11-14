@@ -160,6 +160,30 @@ class Filtering:
                 newImg[j][i] = min
         return newImg
 
+    def midpoint_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                midpoint = (mask.max() + mask.min()) / 2  # Getting rid of the decimal part. Should we add + .5?
+                newImg[j][i] = midpoint
+        return newImg
+
+
+
+
+# image = np.matrix('1 1 1; 2 2 2; 3 3 3')
+image = np.matrix('1 2 3; 4 5 6 ; 7 8 9')
+# median = np.ma.median(np.squeeze(np.asarray(image)))
+test = Filtering(image)
+print(test.midpoint_filter(image))
+
 
 
 
