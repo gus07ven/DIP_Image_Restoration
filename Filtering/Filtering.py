@@ -116,3 +116,22 @@ class Filtering:
                                 valueDen += 1/math.pow(mask[l][m], -Qpara)
                 newImg[j][i] = int(valueNom/valueDen + 0.5)
         return newImg
+
+    def median_filter(self, img, windowSize = 3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                median = np.ma.median(np.squeeze(np.asarray(mask)))    # we can implement getMedian if necessary
+                newImg[j][i] = median
+        return newImg
+
+
+
+
