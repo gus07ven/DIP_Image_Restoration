@@ -8,7 +8,7 @@ from decimal import Decimal
 class Filtering:
     image = None
 
-    def __init__(self, image):
+    def __init__(self, image = None):
         """initializes the variables frequency filtering on an input image
         takes as input:
         image: the input image
@@ -61,12 +61,15 @@ class Filtering:
         for j in range(height):
             for i in range(width):
                 mask = np.zeros((windowSize, windowSize), np.uint8)
+                maskNum = 0
                 mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
                 multipleValue = Decimal(1)
                 for l in range(windowSize):
                     for m in range(windowSize):
-                        multipleValue *= mask[l][m]
-                newImg[j][i] = int(math.pow(multipleValue, windowSize**(-2))+0.5)
+                        if mask[l][m] != 0:
+                            multipleValue *= mask[l][m]
+                            maskNum += 1
+                newImg[j][i] = int(math.pow(multipleValue, 1/maskNum)+0.5)
         return newImg
 
     def harmonic_mean_filter(self, img, windowSize = 3):
@@ -115,4 +118,89 @@ class Filtering:
                             else:
                                 valueDen += 1/math.pow(mask[l][m], -Qpara)
                 newImg[j][i] = int(valueNom/valueDen + 0.5)
+        return newImg
+
+    def adaptive_local_noise_reduction_filter(self, img, theta_square_n, windowSize = 3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+
+                localMean = np.sum(mask) / (windowSize**2)
+                varianceMask = mask - localMean
+                varianceSquare = varianceMask * varianceMask
+                localVariance = np.sum(varianceSquare) / (windowSize**2)
+                if theta_square_n == 0:
+                    newImg = img
+                    return newImg
+                elif theta_square_n > localVariance:
+                    newImg[j][i] = localMean
+                else:
+                    newImg[j][i] = img[j][i] - theta_square_n/localVariance*(img[j][i] - localMean)
+        return newImg
+
+    def median_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                median = np.ma.median(np.squeeze(np.asarray(mask)))    # we can implement getMedian if necessary
+                newImg[j][i] = median
+        return newImg
+
+    def max_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                max = mask.max()  # we can implement getMax if necessary
+                newImg[j][i] = max
+        return newImg
+
+    def min_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                min = mask.min()  # we can implement getMin if necessary
+                newImg[j][i] = min
+        return newImg
+
+    def midpoint_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                midpoint = (mask.max() + mask.min()) / 2  # Getting rid of the decimal part. Should we add + .5?
+                newImg[j][i] = midpoint
         return newImg
