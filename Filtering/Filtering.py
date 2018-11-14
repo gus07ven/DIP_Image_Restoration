@@ -1,9 +1,7 @@
-# For this part of the assignment, You can use inbuilt functions to compute the fourier transform
-# You are welcome to use fft that are available in numpy and opencv
 import numpy as np
-import cv2
 import math
 from decimal import Decimal
+
 
 class Filtering:
     image = None
@@ -118,6 +116,66 @@ class Filtering:
                             else:
                                 valueDen += 1/math.pow(mask[l][m], -Qpara)
                 newImg[j][i] = int(valueNom/valueDen + 0.5)
+        return newImg
+
+    def median_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                median = np.ma.median(np.squeeze(np.asarray(mask)))    # we can implement getMedian if necessary
+                newImg[j][i] = median
+        return newImg
+
+    def max_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                max = mask.max()  # we can implement getMax if necessary
+                newImg[j][i] = max
+        return newImg
+
+    def min_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                min = mask.min()  # we can implement getMin if necessary
+                newImg[j][i] = min
+        return newImg
+
+    def midpoint_filter(self, img, windowSize=3):
+        height, width = img.shape[:2]
+        margin = int(windowSize / 2)
+
+        paddingImg = self.padding_img(img, windowSize)
+        newImg = np.zeros(img.shape[:2], np.uint8)
+
+        for j in range(height):
+            for i in range(width):
+                mask = np.zeros((windowSize, windowSize), np.uint8)
+                mask[0:windowSize, 0:windowSize] = paddingImg[j:j + windowSize, i:i + windowSize]
+                midpoint = (mask.max() + mask.min()) / 2  # Getting rid of the decimal part. Should we add + .5?
+                newImg[j][i] = midpoint
         return newImg
 
     def adaptive_local_noise_reduction_filter(self, img, theta_square_n, windowSize = 3):
