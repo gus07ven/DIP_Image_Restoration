@@ -11,9 +11,7 @@ class Filtering:
         takes as input:
         image: the input image
         filter_name: the name of the mask to use
-        cutoff: the cutoff frequency of the filter
-        order: the order of the filter (only for butterworth
-        returns"""
+        returns a filtered image"""
         self.image = image
 
     def padding_img(self, img, windowSize = 3):
@@ -163,8 +161,7 @@ class Filtering:
             for i in range(width):
                 mask = np.zeros((window_size, window_size), np.uint8)
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
-                midpoint = (mask.max() + mask.min()) / 2  # Getting rid of the decimal part. Should we add + .5?
-                new_img[j][i] = midpoint
+                new_img[j][i] = (mask.max() + mask.min()) / 2  # Getting rid of the decimal part. Should we add + .5?
         return new_img
 
     def alpha_trimmed_filter(self, img, window_size=3):
@@ -179,8 +176,7 @@ class Filtering:
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
                 mask_to_ordered_array = np.sort(np.asarray(mask).flatten())
                 new_mask = mask_to_ordered_array[int(d/2): mask_to_ordered_array.size - (int(d/2))]
-                alpha_trimmed_mean = int(np.ma.mean(np.squeeze(new_mask)))  # Should we cast to int when np takes care of it?
-                new_img[j][i] = alpha_trimmed_mean
+                new_img[j][i] = int(np.ma.mean(np.squeeze(new_mask)))  # Should we cast to int when np takes care of it?
         return new_img
 
     def adaptive_local_noise_reduction_filter(self, img, theta_square_n, windowSize = 3):
@@ -223,8 +219,7 @@ class Filtering:
                 z_xy = np.asarray(img)[j][i]
                 s_max = 7
 
-                test = self.level_a(j, i, z_med, z_min, z_max, z_xy, window_size, s_max)
-                new_img[j][i] = test
+                new_img[j][i] = self.level_a(j, i, z_med, z_min, z_max, z_xy, window_size, s_max)
         return new_img
 
     def level_a(self, j, i, z_med, z_min, z_max, z_xy, window_size, s_max):
@@ -246,7 +241,3 @@ class Filtering:
             return z_xy
         else:
             return z_med
-
-
-
-
