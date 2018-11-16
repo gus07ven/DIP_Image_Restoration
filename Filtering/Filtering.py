@@ -1,10 +1,14 @@
 import numpy as np
 import math
 from decimal import Decimal
+import cv2
 
 
 class Filtering:
     image = None
+
+    img = '/Users/garismendi/Documents/Source/Repos/DIP_Image_Restoration/add noise  image.png'
+    input_image = cv2.imread(img, 0)
 
     def __init__(self, image = None):
         """initializes the variables frequency filtering on an input image
@@ -161,14 +165,15 @@ class Filtering:
             for i in range(width):
                 mask = np.zeros((window_size, window_size), np.uint8)
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
-                new_img[j][i] = (mask.max() + mask.min()) / 2  # Getting rid of the decimal part. Should we add + .5?
+                new_img[j][i] = (mask.max() + mask.min()) / 2  # Add + .5 to this with int()
         return new_img
 
-    def alpha_trimmed_filter(self, img, window_size=3):
+    def alpha_trimmed_filter(self, img, d, window_size=3):
         height, width = img.shape[:2]
         padding_img = self.padding_img(img, window_size)
         new_img = np.zeros(img.shape[:2], np.uint8)
-        d = 2  # Should we make this a user determined parameter? If so, we have to be careful
+        d = 2  # Change this to be a parameter pass by the user. Error check when reading argument provide default
+        # case when parameter is outside of established bounds.
 
         for j in range(height):
             for i in range(width):
@@ -176,7 +181,7 @@ class Filtering:
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
                 mask_to_ordered_array = np.sort(np.asarray(mask).flatten())
                 new_mask = mask_to_ordered_array[int(d/2): mask_to_ordered_array.size - (int(d/2))]
-                new_img[j][i] = int(np.ma.mean(np.squeeze(new_mask)))  # Should we cast to int when np takes care of it?
+                new_img[j][i] = int(np.ma.mean(np.squeeze(new_mask)))  # Add + .5
         return new_img
 
     def adaptive_local_noise_reduction_filter(self, img, theta_square_n, windowSize = 3):
@@ -241,3 +246,19 @@ class Filtering:
             return z_xy
         else:
             return z_med
+
+# # image = np.matrix('1 1 1; 2 2 2; 3 3 3')
+# # image = np.matrix('1 2 3; 4 5 6 ; 7 8 9')
+# # image = np.matrix('1 255 3 255 4; 4 5 6 255 0 ; 0 7 0 9 255')
+# img = '/Users/garismendi/Documents/Source/Repos/DIP_Image_Restoration/add noise  image.png'
+# input_image = cv2.imread(img, 0)
+# # median = np.ma.median(np.squeeze(np.asarray(image)))
+# test = Filtering(input_image)
+# print(test.min_filter(input_image))
+# result = test.adaptive_median_filter(input_image)
+# # cv2.imwrite("testResult", result)
+# # cv2.imshow("look", result)
+# # cv2.waitKey()
+# # result2 = test.max_filter(result)
+# cv2.imshow("look2", result)
+# cv2.waitKey()
