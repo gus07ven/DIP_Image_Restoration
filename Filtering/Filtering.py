@@ -2,12 +2,13 @@ import numpy as np
 import math
 from decimal import Decimal
 import cv2
-
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as pet  # Do not move these to top of file, matplotlib won't work for Mac users.
+from datetime import datetime         # Do not move these to top of file, matplotlib won't work for Mac users.
 
 class Filtering:
     image = None
-
-
 
     def __init__(self, image = None):
         """initializes the variables frequency filtering on an input image
@@ -20,7 +21,7 @@ class Filtering:
     def padding_img(self, img, windowSize = 3):
         height, width = img.shape[:2]
         margin = int(windowSize / 2)
-        paddingImage = np.zeros((height + margin * 2, width + margin * 2))
+        paddingImage = np.zeros((height + margin * 2, width + margin * 2), np.uint8)
         for j in range(margin):
                 paddingImage[j,margin:margin+width] = img[0,0:width]
                 paddingImage[j+height+margin,margin:margin+width] = img[height-1,0:width]
@@ -128,7 +129,7 @@ class Filtering:
             for i in range(width):
                 mask = np.zeros((window_size, window_size), np.uint8)
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
-                new_img[j][i] = np.ma.median(np.squeeze(np.asarray(mask)))    # we can implement getMedian if necessary
+                new_img[j][i] = np.ma.median(np.squeeze(np.asarray(mask)))
         return new_img
 
     def max_filter(self, img, window_size=3):
@@ -140,7 +141,7 @@ class Filtering:
             for i in range(width):
                 mask = np.zeros((window_size, window_size), np.uint8)
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
-                new_img[j][i] = mask.max()  # we can implement getMax if necessary
+                new_img[j][i] = mask.max()
         return new_img
 
     def min_filter(self, img, window_size=3):
@@ -152,7 +153,7 @@ class Filtering:
             for i in range(width):
                 mask = np.zeros((window_size, window_size), np.uint8)
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
-                new_img[j][i] = mask.min()  # we can implement getMin if necessary
+                new_img[j][i] = mask.min()
         return new_img
 
     def midpoint_filter(self, img, window_size=3):
@@ -164,7 +165,7 @@ class Filtering:
             for i in range(width):
                 mask = np.zeros((window_size, window_size), np.uint8)
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
-                new_img[j][i] = (mask.max() + mask.min()) / 2  # Add + .5 to this with int()
+                new_img[j][i] = int(((int(mask.max()) + int(mask.min())) / 2) + .5)
         return new_img
 
     def alpha_trimmed_filter(self, img, d, window_size=3):
@@ -246,22 +247,26 @@ class Filtering:
         else:
             return z_med
 
-# # image = np.matrix('1 1 1; 2 2 2; 3 3 3')
-# # image = np.matrix('1 2 3; 4 5 6 ; 7 8 9')
-# # image = np.matrix('1 255 3 255 4; 4 5 6 255 0 ; 0 7 0 9 255')
-# img = '/Users/garismendi/Documents/Source/Repos/DIP_Image_Restoration/add noise  image.png'
-# input_image = cv2.imread(img, 0)
 
-if  __name__ == "__main__":
-    img = 'C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\homework-3-ani4991\\Lenna.png'
+if __name__ == "__main__":
+
+    img = '/Users/garismendi/Documents/Source/Repos/DIP_Image_Restoration/Noise/Gaussian_noise_img.jpg'
     input_image = cv2.imread(img, 0)
+
     test = Filtering(input_image)
-    print(test.min_filter(input_image))
-    result = test.adaptive_median_filter(input_image)
-    #cv2.imwrite("testResult", result)
-    cv2.imshow("look", result)
+    result = test.midpoint_filter(input_image)   # Change filter name here and pass parameters
+
+    pet.hist(result, bins='auto')
+    pet.show()
+
+    cv2.imshow("noise", input_image)
     cv2.waitKey()
-    result2 = test.max_filter(result)
-    cv2.imshow("look2", result)
+
+    cv2.imshow("result", result)
     cv2.waitKey()
+
+    output_dir = 'output/'
+    output_image_name = output_dir + "Gaussian_noise_img" + "_" + datetime.now().strftime("%m%d-%H%M%S") + str(
+        "_midpoint_filter") + ".jpg"       # Change name of image and filter applied if necessary
+    cv2.imwrite(output_image_name, result)
 
