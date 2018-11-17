@@ -44,5 +44,6 @@ if  __name__ == "__main__":
     type = input("enter your choice \n")
     noisy_img = noise(type, img)
     cv2.imshow("img",noisy_img)
+    cv2.imwrite(type + "_noise_img.jpg", noisy_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
