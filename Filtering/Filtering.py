@@ -7,8 +7,7 @@ import cv2
 class Filtering:
     image = None
 
-    img = '/Users/garismendi/Documents/Source/Repos/DIP_Image_Restoration/add noise  image.png'
-    input_image = cv2.imread(img, 0)
+
 
     def __init__(self, image = None):
         """initializes the variables frequency filtering on an input image
@@ -21,7 +20,7 @@ class Filtering:
     def padding_img(self, img, windowSize = 3):
         height, width = img.shape[:2]
         margin = int(windowSize / 2)
-        paddingImage = np.zeros((height + margin * 2, width + margin * 2), np.uint8)
+        paddingImage = np.zeros((height + margin * 2, width + margin * 2))
         for j in range(margin):
                 paddingImage[j,margin:margin+width] = img[0,0:width]
                 paddingImage[j+height+margin,margin:margin+width] = img[height-1,0:width]
@@ -171,7 +170,7 @@ class Filtering:
     def alpha_trimmed_filter(self, img, d, window_size=3):
         height, width = img.shape[:2]
         padding_img = self.padding_img(img, window_size)
-        new_img = np.zeros(img.shape[:2], np.uint8)
+        new_img = np.zeros(img.shape[:2])
         d = 2  # Change this to be a parameter pass by the user. Error check when reading argument provide default
         # case when parameter is outside of established bounds.
 
@@ -181,7 +180,7 @@ class Filtering:
                 mask[0:window_size, 0:window_size] = padding_img[j:j + window_size, i:i + window_size]
                 mask_to_ordered_array = np.sort(np.asarray(mask).flatten())
                 new_mask = mask_to_ordered_array[int(d/2): mask_to_ordered_array.size - (int(d/2))]
-                new_img[j][i] = int(np.ma.mean(np.squeeze(new_mask)))  # Add + .5
+                new_img[j][i] = np.ma.mean(np.squeeze(new_mask)) # Add + .5
         return new_img
 
     def adaptive_local_noise_reduction_filter(self, img, theta_square_n, windowSize = 3):
@@ -252,14 +251,17 @@ class Filtering:
 # # image = np.matrix('1 255 3 255 4; 4 5 6 255 0 ; 0 7 0 9 255')
 # img = '/Users/garismendi/Documents/Source/Repos/DIP_Image_Restoration/add noise  image.png'
 # input_image = cv2.imread(img, 0)
-# # median = np.ma.median(np.squeeze(np.asarray(image)))
-# test = Filtering(input_image)
-# print(test.min_filter(input_image))
-# result = test.adaptive_median_filter(input_image)
-# # cv2.imwrite("testResult", result)
-# # cv2.imshow("look", result)
-# # cv2.waitKey()
-# # result2 = test.max_filter(result)
-# cv2.imshow("look2", result)
-# cv2.waitKey()
+
+if  __name__ == "__main__":
+    img = 'C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\homework-3-ani4991\\Lenna.png'
+    input_image = cv2.imread(img, 0)
+    test = Filtering(input_image)
+    print(test.min_filter(input_image))
+    result = test.adaptive_median_filter(input_image)
+    #cv2.imwrite("testResult", result)
+    cv2.imshow("look", result)
+    cv2.waitKey()
+    result2 = test.max_filter(result)
+    cv2.imshow("look2", result)
+    cv2.waitKey()
 

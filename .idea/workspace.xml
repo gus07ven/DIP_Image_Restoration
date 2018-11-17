@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e1fb068-0e72-4abe-91fd-22b13f73d0d7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Filtering/Filtering.py" beforeDir="false" afterPath="$PROJECT_DIR$/Filtering/Filtering.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Noise/Gaussian_noise_img.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Noise/Gaussian_noise_img.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Noise/Noise.py" beforeDir="false" afterPath="$PROJECT_DIR$/Noise/Noise.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Noise/scikit_method.py" beforeDir="false" afterPath="$PROJECT_DIR$/Noise/scikit_method.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,40 +18,49 @@
     <session id="436842744">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
-          <entry key="project.open.time.0" value="3" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.0" value="4" />
+          <entry key="project.opened" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="16" />
+          <entry key="py" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="16" />
+          <entry key="Python" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3919" />
+          <entry key="py" value="4192" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="3919" />
+          <entry key="Python" value="4192" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Filtering/Filtering.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Noise/Noise.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="52" column="50" lean-forward="true" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="50" />
+            <state relative-caret-position="208">
+              <caret line="69" column="40" lean-forward="true" selection-start-line="69" selection-start-column="40" selection-end-line="69" selection-end-column="40" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -55,14 +68,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Noise/scikit_method.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="46" column="51" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
+            <state relative-caret-position="153">
+              <caret line="9" selection-start-line="9" selection-end-line="9" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
-                <marker date="1542479833031" expanded="true" signature="77:99" ph="..." />
               </folding>
             </state>
           </provider>
@@ -71,7 +83,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Noise/noise_addition.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-81">
+            <state relative-caret-position="17">
               <caret line="11" column="31" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
@@ -83,11 +95,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Noise/noise_addition2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
+            <state relative-caret-position="170">
               <caret line="43" column="102" selection-start-line="42" selection-end-line="43" selection-end-column="102" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <marker date="1542408870655" expanded="true" signature="143:1885" ph="..." />
               </folding>
             </state>
           </provider>
@@ -109,10 +120,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Noise/Noise.py" />
         <option value="$PROJECT_DIR$/Noise/noise_addition.py" />
         <option value="$PROJECT_DIR$/Noise/noise_addition2.py" />
         <option value="$PROJECT_DIR$/Noise/scikit_method.py" />
+        <option value="$PROJECT_DIR$/Filtering/Filtering.py" />
+        <option value="$PROJECT_DIR$/Noise/Noise.py" />
       </list>
     </option>
   </component>
@@ -128,7 +140,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -150,6 +161,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -168,7 +180,49 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.scikit_method">
+  <component name="RunManager" selected="Python.Noise">
+    <configuration name="Filtering" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="DIP_Image_Restoration" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Filtering" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Filtering/Filtering.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Noise" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="DIP_Image_Restoration" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Noise" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Noise/Noise.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="noise_addition2" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="DIP_Image_Restoration" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -214,9 +268,13 @@
     <list>
       <item itemvalue="Python.noise_addition2" />
       <item itemvalue="Python.scikit_method" />
+      <item itemvalue="Python.Noise" />
+      <item itemvalue="Python.Filtering" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Noise" />
+        <item itemvalue="Python.Filtering" />
         <item itemvalue="Python.scikit_method" />
         <item itemvalue="Python.noise_addition2" />
       </list>
@@ -237,7 +295,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1616" height="876" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19898605" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -300,7 +357,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Noise/noise_addition.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-81">
+        <state relative-caret-position="17">
           <caret line="11" column="31" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
@@ -310,32 +367,37 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Noise/noise_addition2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
+        <state relative-caret-position="170">
           <caret line="43" column="102" selection-start-line="42" selection-end-line="43" selection-end-column="102" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <marker date="1542408870655" expanded="true" signature="143:1885" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Filtering/Filtering.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Noise/scikit_method.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Noise/Noise.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="52" column="50" lean-forward="true" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="50" />
+        <state relative-caret-position="208">
+          <caret line="69" column="40" lean-forward="true" selection-start-line="69" selection-start-column="40" selection-end-line="69" selection-end-column="40" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Noise/scikit_method.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="46" column="51" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-            <marker date="1542479833031" expanded="true" signature="77:99" ph="..." />
           </folding>
         </state>
       </provider>

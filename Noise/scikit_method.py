@@ -7,6 +7,7 @@ def noise(type,img):
 
         print("original matrix",img)
         noise_img = sk.random_noise(img,mode='gaussian', seed=None,clip=False)
+
         print("matrix values",noise_img)
         return noise_img
 
