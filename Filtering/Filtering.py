@@ -2,6 +2,7 @@ import numpy as np
 import math
 from decimal import Decimal
 import cv2
+import matplotlib.pyplot as plt
 
 
 class Filtering:
@@ -253,11 +254,13 @@ class Filtering:
 # input_image = cv2.imread(img, 0)
 
 if  __name__ == "__main__":
-    img = 'C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\homework-3-ani4991\\Lenna.png'
+    img = 'C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\DIP_Image_Restoration\\Noise\\Gaussian_noise_img.jpg'
     input_image = cv2.imread(img, 0)
     test = Filtering(input_image)
-    print(test.min_filter(input_image))
-    result = test.adaptive_median_filter(input_image)
+
+    result = test.harmonic_mean_filter(input_image)
+    plt.hist(result,bins='auto')
+    plt.show()
     #cv2.imwrite("testResult", result)
     cv2.imshow("look", result)
     cv2.waitKey()
