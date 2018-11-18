@@ -4,6 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 import random
 import math
+from scipy import stats
 def noisy(noise_typ,image):
    if noise_typ == "Gaussian":
       row,col= image.shape
@@ -59,18 +60,32 @@ def noisy(noise_typ,image):
        mean = 0
        var = 0.1
        sigma = var ** 0.5
-       gauss = np.random.rayleigh(scale=10, size=(row, col))
-       print(gauss.shape)
-       plt.hist(gauss, bins='auto')
-       plt.show()
-       gauss = gauss.reshape(row, col)
-       noisy = image + gauss
+       s = stats.mode(image,axis = None)
+       print("s=",s[0])
+       s = s[0]
+       ray = np.random.rayleigh(scale=10, size=(row, col))
+       #print(gauss.shape)
+       #plt.hist(ray, bins='auto')
+       #plt.show()
+       ray = ray.reshape(row, col)
+       noisy = image + ray
        noisy = np.array(noisy, dtype=np.uint8)
+       return noisy
 
+   elif noise_typ == "Gamma":
+       row,col = image.shape
+       gamma = np.random.gamma(shape=2,scale =10,size=(row,col))
+       plt.hist(gamma, bins='auto')
+       plt.show()
+       image = image + gamma
+       image = np.array(image, dtype=np.uint8)
+       #plt.hist(image, bins='auto')
+       #plt.show()
+       return image
 
 if  __name__ == "__main__":
     print("type of noise:")
-    print("\t 1. Gaussian \n\t 2. salt&pepper \n\t 3.Poisson \n\t 4.speckle")
+    print("\t 1. Gaussian \n\t 2. salt&pepper \n\t 3.Poisson \n\t 4.speckle \n\t 5.Rayleigh \n\t 6.Gamma")
     type = input("enter your choice \n")
     img = cv2.imread("C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\homework-3-ani4991\\Lenna.png",0)
     #plt.hist(img, bins='auto')
