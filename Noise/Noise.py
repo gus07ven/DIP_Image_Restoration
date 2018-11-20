@@ -15,15 +15,15 @@ def noisy(noise_typ,image):
       print(gauss.shape)
       gauss = gauss.reshape(row,col)
       noisy = image + gauss
-      #plt.hist(noisy, bins='auto')
-      #plt.show()
+      plt.hist(noisy, bins=5)
+      plt.show()
       noisy = np.array(noisy,dtype=np.uint8)
       #plt.hist(noisy, bins='auto')
       #plt.show()
 
       return noisy
    elif noise_typ == "salt&pepper":
-      prob = 0.2
+      prob = 0.01
       thres = 1 - prob
       for i in range(0,image.shape[0]):
           for j in range(0,image.shape[1]):
@@ -34,16 +34,16 @@ def noisy(noise_typ,image):
                   image[i][j] = 255
               else:
                   image[i][j] = image[i][j]
-      plt.hist(image, bins='auto')
-      plt.show()
+      #plt.hist(image, bins='auto')
+      #plt.show()
       return image
    elif noise_typ == "poisson":
       vals = len(np.unique(image))
       vals = 2 ** np.ceil(np.log2(vals))
       noisy = np.random.poisson(image * vals) / float(vals)
       noisy = np.array(noisy, dtype=np.uint8)
-      #plt.hist(noisy, bins='auto')
-      #plt.show()
+      plt.hist(noisy, bins=5)
+      plt.show()
       return noisy
    elif noise_typ =="speckle":
       row,col = image.shape
@@ -82,12 +82,22 @@ def noisy(noise_typ,image):
        #plt.hist(image, bins='auto')
        #plt.show()
        return image
+   elif noise_typ == "Exponential":
+       row, col = image.shape
+       exponen = np.random.exponential(scale=3, size=(row, col))
+       plt.hist(exponen, bins='auto')
+       plt.show()
+       image = image + exponen
+       image = np.array(image, dtype=np.uint8)
+       plt.hist(image, bins='auto')
+       plt.show()
+       return image
 
 if  __name__ == "__main__":
     print("type of noise:")
-    print("\t 1. Gaussian \n\t 2. salt&pepper \n\t 3.Poisson \n\t 4.speckle \n\t 5.Rayleigh \n\t 6.Gamma")
+    print("\t 1. Gaussian \n\t 2. salt&pepper \n\t 3.Poisson \n\t 4.speckle \n\t 5.Rayleigh \n\t 6.Gamma \t\n 7. Exponential")
     type = input("enter your choice \n")
-    img = cv2.imread("C:\\Users\\ani49\\OneDrive\\Documents\\GitHub\\homework-3-ani4991\\Lenna.png",0)
+    img = cv2.imread("C:\\Users\\ani49\\OneDrive\\Desktop\\testimage.png",0)
     #plt.hist(img, bins='auto')
     #plt.show()
     noisy_img = noisy(type,img)
