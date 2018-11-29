@@ -59,7 +59,7 @@ class GUI(Frame):
 
 
 
-        root.configure(background='#313131')
+        root.configure(background='#ffffff')
 
 
     def choose(self):
