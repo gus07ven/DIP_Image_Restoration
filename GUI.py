@@ -3,7 +3,7 @@ from PIL import ImageTk, Image
 import numpy as np
 from tkinter import *
 import tkinter.filedialog
-from PIL import  Image
+from PIL import Image
 import cv2
 import random
 import sys
@@ -25,6 +25,8 @@ class GUI(Frame):
         self.labelMean = Label(root, text='Mean:')
         self.labelVariance = Label(root, text='Variance:')
         self.labelProbability = Label(root, text='Probability')
+        self.labelWindowSize = Label(root, text='Window size:')
+        self.labelDParam = Label(root, text='D:')
         self.file = Button(self, text='Browse', command=self.choose)
         self.image = PhotoImage(file='images/placeholder_new.png').subsample(3)
         self.label = Label(image=self.image)
@@ -39,6 +41,12 @@ class GUI(Frame):
         self.adpwindow_size = Entry(root)
         self.hm_window_size = Entry(root)
         self.hmcans = Button()
+        self.noise_mean = Entry(root)
+        self.noise_variance = Entry(root)
+        self.noise_probability = Entry(root)
+        # self.filter_window_size = Entry(root)
+        # self.filter_q_param = Entry(root)
+        # self.filter_d_param = Entry(root)
 
         global flag
         global window_size
@@ -148,6 +156,7 @@ class GUI(Frame):
     #     return img
 
     def gauss(self, mean_parameter, variance_parameter):
+        global path
         cvimg = cv2.imread(path,0)
         img = cv2.resize(cvimg, (250, 250))
         row, col = img.shape
@@ -174,14 +183,15 @@ class GUI(Frame):
         if (flag != 0):
             print("FLAG VAL", flag)
 
-            set_Filter()
+            set_filter()
             gauss_arrow()
         return noisy
 
     def saltpepper(self, probability_param):
+        global path
         image = cv2.imread(path, 0)
         image = cv2.resize(image, (250, 250))
-        prob = probability_param    # was 0.2
+        prob = float(probability_param.get()) # was 0.2
         thres = 1 - prob
         for i in range(0, image.shape[0]):
             for j in range(0, image.shape[1]):
@@ -202,10 +212,11 @@ class GUI(Frame):
 
         if (flag != 0):
             print("FLAG VAL", flag)
-            set_Filter()
+            set_filter()
             sp_arrow()
 
     def exponentialNoise(self):
+        global path
         image = cv2.imread(path, 0)
         image = cv2.resize(image, (250, 250))
         row, col = image.shape
@@ -218,7 +229,7 @@ class GUI(Frame):
         cv2.imwrite("images/noisy_img_DIP.jpg", noisy)
         if (flag != 0):
             print("FLAG VAL", flag)
-            set_Filter()
+            set_filter()
             exp_arrow()
         return noisy
 
@@ -233,27 +244,38 @@ def alpha_trimmed_filter_params():
         app.alnf_can.destroy()
         app.hm_window_size.destroy()
         app.hmcans.destroy()
+        app.labelWindowSize['text'] = ''
+        app.labelDParam['text'] = ''
 
-    print("atrim",atrim)
-    print("mp in atrim",mp)
-    app.qpara = Entry(root)
-    app.qpara.pack()
-    app.qpara.focus_set()
-    app.qpara.insert(0, 'Enter the value for d')
-    app.qpara.config(font=("Courier", 20), fg="#313131", bd="2px")
-    app.qpara.place(x=740, y=240, anchor=N)
+    app.labelWindowSize = Label(root, text='Window Size:')
+    app.labelWindowSize.config(font=("Arial", 20), fg="black")
+    app.labelWindowSize.place(x=500, y=240)
 
     print("alpha_Trimmed_params called")
     app.ch_window_size = Entry(root)
     app.ch_window_size.pack()
     app.ch_window_size.focus_set()
-    app.ch_window_size.config(font=("Courier", 20), fg="#313131", bd="2px")
-    app.ch_window_size.place(x=500, y=240, anchor=N)
-    app.ch_window_size.insert(0,'Enter Window size')
+    app.ch_window_size.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+    app.ch_window_size.place(x=650, y=240)
+    app.ch_window_size.insert(0, '0')
 
-    app.t = Button(root, text='Apply Filter', fg='white', command=lambda: create_alpha_trimmed_filter_window(app.ch_window_size,app.qpara))
-    app.t.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-    app.t.place(x=960, y=240, anchor=N)
+    app.labelWindowSize = Label(root, text='D:')
+    app.labelWindowSize.config(font=("Arial", 20), fg="black")
+    app.labelWindowSize.place(x=725, y=240)
+
+    print("atrim", atrim)
+    print("mp in atrim", mp)
+    app.qpara = Entry(root)
+    app.qpara.pack()
+    app.qpara.focus_set()
+    app.qpara.insert(0, '0')
+    app.qpara.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+    app.qpara.place(x=775, y=240)
+
+    app.t = Button(root, text='Apply Filter', fg='white',
+                   command=lambda: create_alpha_trimmed_filter_window(app.ch_window_size, app.qpara))
+    app.t.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
+    app.t.place(x=850, y=240)
     app.ch_window_size.bind("<Button-1>", alphatrim_callback_ch)
     app.qpara.bind("<Button-1>", alphatrim_callback_d)
 
@@ -263,7 +285,7 @@ root = Tk()
 app = GUI(master=root)
 m = root.maxsize()
 root.geometry('{}x{}+0+0'.format(*m))
-root.title("Noise Generator")
+root.title("IUF18 Image Restorer")
 
 a = StringVar()
 a.set("default")
@@ -273,6 +295,7 @@ fil_b.set("default")
 fil_b = StringVar()
 oc = StringVar(root)
 oc.set("Select Noise")
+
 fil = StringVar(root)
 fil.set("Select Filter")
 # def on_entry_click(self):
@@ -308,7 +331,7 @@ def alphatrim_callback_d(event): # note that you must include the event as an ar
     return None
 
 
-def adativelnf_params():
+def adaptivelnf_params():
     print("adaptivelnf_params called")
     adp = 1
     if adp != 0:
@@ -318,19 +341,23 @@ def adativelnf_params():
         app.hm_window_size.destroy()
         app.cans.destroy()
         app.hmcans.destroy()
+        app.labelWindowSize['text'] = ''
 
-    app.adpwindow_size = Entry(root,bd=1)
+    app.labelWindowSize = Label(root, text='Window Size:')
+    app.labelWindowSize.config(font=("Arial", 20), fg="black")
+    app.labelWindowSize.place(x=500, y=240)
+    app.adpwindow_size = Entry(root, bd=1)
     app.adpwindow_size.pack()
     app.adpwindow_size.focus_set()
 
-    app.adpwindow_size.config(font=("Courier", 18), fg="#313131", bd="2px")
-    app.adpwindow_size.insert(0,'Enter Window size')
-    app.adpwindow_size.place(x=500, y=240, anchor=N)
+    app.adpwindow_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
+    app.adpwindow_size.insert(0, '0')
+    app.adpwindow_size.place(x=650, y=240, anchor=N)
     app.adpwindow_size.bind("<Button-1>", adp_callback)
 
     app.alnf_can = Button(root, text='Apply Filter', fg='white', command=lambda: create_adaptive_noisereduce_filter_window(app.adpwindow_size))
-    app.alnf_can.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-    app.alnf_can.place(x=760, y=240)
+    app.alnf_can.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
+    app.alnf_can.place(x=850, y=240)
 
 
 def midpoint_filter_params():
@@ -346,18 +373,22 @@ def midpoint_filter_params():
         app.adpwindow_size.destroy()
         app.alnf_can.destroy()
         app.hmcans.destroy()
+        app.labelWindowSize['text'] = ''
 
+    app.labelWindowSize = Label(root, text='Window Size:')
+    app.labelWindowSize.config(font=("Arial", 20), fg="black")
+    app.labelWindowSize.place(x=500, y=240)
     app.mp_window_size = Entry(root)
     app.mp_window_size.pack()
     app.mp_window_size.focus_set()
 
-    app.mp_window_size.config(font=("Courier", 18), fg="#313131", bd="2px")
-    app.mp_window_size.place(x=500, y=240, anchor=N)
-    app.mp_window_size.insert(0, 'Enter Window size')
+    app.mp_window_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
+    app.mp_window_size.place(x=650, y=240)
+    app.mp_window_size.insert(0, '0')
 
     app.cans = Button(root, text='Apply Filter', fg='white', command=lambda: create_midpoint_filter_window(app.mp_window_size))
-    app.cans.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-    app.cans.place(x=760, y=240)
+    app.cans.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
+    app.cans.place(x=850, y=240)
     app.mp_window_size.bind("<Button-1>", mp_callback)
 
 
@@ -372,16 +403,49 @@ def harmonic_mean_filter_params():
         app.adpwindow_size.destroy()
         app.mp_window_size.destroy()
         app.cans.destroy()
+        app.labelWindowSize['text'] = ''
 
+    app.labelWindowSize = Label(root, text='Window Size:')
+    app.labelWindowSize.config(font=("Arial", 20), fg="black")
+    app.labelWindowSize.place(x=500, y=240)
     app.hm_window_size = Entry(root)
     app.hm_window_size.pack()
     app.hm_window_size.focus_set()
-    app.hm_window_size.config(font=("Courier", 18), fg="#313131", bd="2px")
-    app.hm_window_size.place(x=500, y=240, anchor=N)
-    app.hm_window_size.insert(0, 'Enter Window size')
-    app.hmcans = Button(root, text='Apply Filter', fg='white',                      command=lambda: create_harmonic_filter_window(app.hm_window_size))
-    app.hmcans.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-    app.hmcans.place(x=760, y=240)
+    app.hm_window_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
+    app.hm_window_size.place(x=650, y=240)
+    app.hm_window_size.insert(0, '0')
+    app.hmcans = Button(root, text='Apply Filter', fg='white',
+                        command=lambda: create_harmonic_filter_window(app.hm_window_size))
+    app.hmcans.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
+    app.hmcans.place(x=850, y=240)
+    app.hm_window_size.bind("<Button-1>", hm_callback)
+
+
+def adaptive_median_filter_params():
+    print("adaptive_median_filter_params called")
+    hm = 1
+
+    if hm != 0:
+        app.ch_window_size.destroy()
+        app.qpara.destroy()
+        app.adpwindow_size.destroy()
+        app.mp_window_size.destroy()
+        app.cans.destroy()
+        app.labelWindowSize['text'] = ''
+
+    app.labelWindowSize = Label(root, text='Window Size:')
+    app.labelWindowSize.config(font=("Arial", 20), fg="black")
+    app.labelWindowSize.place(x=500, y=240)
+    app.hm_window_size = Entry(root)
+    app.hm_window_size.pack()
+    app.hm_window_size.focus_set()
+    app.hm_window_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
+    app.hm_window_size.place(x=650, y=240)
+    app.hm_window_size.insert(0, '0')
+    app.hmcans = Button(root, text='Apply Filter', fg='white',
+                        command=lambda: create_adaptive_median_filter_window(app.hm_window_size))
+    app.hmcans.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
+    app.hmcans.place(x=850, y=240)
     app.hm_window_size.bind("<Button-1>", hm_callback)
 
 
@@ -431,7 +495,18 @@ def create_harmonic_filter_window(window_size):
     app.denoised_img.configure(image=app.photos, width=200, height=200)
 
 
-def create_alpha_trimmed_filter_window(ch_window_size,qpara):
+def create_adaptive_median_filter_window(window_size):
+    img = 'images/noisy_img_DIP.jpg'
+    input_image = cv2.imread(img, 0)
+    test = Filtering(input_image)
+    print("print window size", int(window_size.get()))
+    result = test.adaptive_median_filter(input_image, int(window_size.get()))
+    # cv2.imshow("Denoised_Image", result)
+    app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
+    app.denoised_img.configure(image=app.photos, width=200, height=200)
+
+
+def create_alpha_trimmed_filter_window(ch_window_size, qpara):
     img = 'images/noisy_img_DIP.jpg'
     input_image = cv2.imread(img, 0)
     test = Filtering(input_image)
@@ -446,10 +521,11 @@ def create_alpha_trimmed_filter_window(ch_window_size,qpara):
     print(int(stringss))
 
 
-def set_Filter():
-    filter_select_menu = OptionMenu(root, fil, "harmonic mean filter", "alpha_trimmed_filter", "adaptive_local_noise_reduction_filter", "midpoint_filter", command=Filter_Select_function)
-    filter_select_menu.config(font=("Courier", 14), fg="#313131", bd="5px", relief="raised")
-    filter_select_menu.place(x=160, y=240, anchor=N)
+def set_filter():
+    filter_select_menu = OptionMenu(root, fil, "Adaptive median", "Adaptive local noise reduction", "Alpha trimmed",
+                                    "Harmonic mean", "Midpoint", command=select_filter)
+    filter_select_menu.config(font=("Arial", 20), fg="#313131", bd="10px", relief="raised")
+    filter_select_menu.place(x=200, y=240)
 
 
 def sp_arrow():
@@ -474,169 +550,169 @@ def gauss_arrow():
     root.splbl['bg'] = '#313131'
 
 
-def Filter_Select_function(x):
+def select_filter(x):
     if x == "default":
         fil_b.set("default")
         print(fil_b.get())
-    elif x == "harmonic mean filter":
+    elif x == "Adaptive median":
+        fil_b.set("Adaptive median")
+        # app.gauss()
+        adaptive_median_filter_params()
+        print(fil_b.get())
+    elif x == "Harmonic mean":
         fil_b.set("harmonic mean filter")
         # app.gauss()
         harmonic_mean_filter_params()
         print(fil_b.get())
-    elif x == "midpoint_filter":
+    elif x == "Midpoint":
         fil_b.set("midpoint_filter")
         # app.gauss()
         midpoint_filter_params()
         print(fil_b.get())
-
-    elif x == "adaptive_local_noise_reduction_filter":
+    elif x == "Adaptive local noise reduction":
         fil_b.set("adaptive_local_noisefilter")
-        adativelnf_params()
+        adaptivelnf_params()
         print(fil_b.get())
-    elif x == "alpha_trimmed_filter":
+    elif x == "Alpha trimmed":
         fil_b.set("alpha_trimmed_filter filter")
         alpha_trimmed_filter_params()
         print(fil_b.get())
 
 
 # when you click certain noise from drop down in comes here
-def Noise_Select_function(x):
+def select_noise(x):
     if x == "default":
-        # app.noise_mean.destroy()
-        # app.noise_variance.destroy()
-        # app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
         a.set("default")
         print(a.get())
-    elif x == "gaussian":
-        # app.noise_mean.destroy()
-        # app.noise_variance.destroy()
-        # app.noise_probability.destroy()
+
+    elif x == "Gaussian":
+        app.noise_mean.destroy()
+        app.noise_variance.destroy()
+        app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
         a.set("gaussian")
 
         app.labelMean = Label(root, text='Mean:')
-        app.labelMean.config(font=("Courier", 20), fg="black")
-        app.labelMean.place(x=220, y=180)
+        app.labelMean.config(font=("Arial", 20), fg="black")
+        app.labelMean.place(x=400, y=180)
 
         app.noise_mean = Entry(root)
         app.noise_mean.pack()
         app.noise_mean.focus_set()
         app.noise_mean.insert(0, '0')
-        app.noise_mean.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
-        app.noise_mean.place(x=300, y=180)
+        app.noise_mean.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+        app.noise_mean.place(x=475, y=180)
 
         app.labelVariance = Label(root, text='Variance:')
-        app.labelVariance.config(font=("Courier", 20), fg="black")
-        app.labelVariance.place(x=380, y=180)
+        app.labelVariance.config(font=("Arial", 20), fg="black")
+        app.labelVariance.place(x=550, y=180)
 
         app.noise_variance = Entry(root)
         app.noise_variance.pack()
         app.noise_variance.focus_set()
         app.noise_variance.insert(0, '0')
-        app.noise_variance.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
-        app.noise_variance.place(x=500, y=180)
+        app.noise_variance.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+        app.noise_variance.place(x=650, y=180)
 
         app.t = Button(root, text='Add noise', fg='white', command=lambda: app.gauss(app.noise_mean, app.noise_variance))
-        app.t.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-        app.t.place(x=650, y=180, anchor=N)
+        app.t.config(font=("Arial", 22), fg="#313131", bd="10px", relief="raised")
+        app.t.place(x=850, y=180, anchor=N)
         print(a.get())
 
-    elif x == "saltandPepper":
-        # app.noise_mean.destroy()
-        # app.noise_variance.destroy()
-        # app.noise_probability.destroy()
+    elif x == "Salt and pepper":
+        app.noise_mean.destroy()
+        app.noise_variance.destroy()
+        app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
         a.set("saltandPepper")
 
         app.labelProbability = Label(root, text='Probability:')
-        app.labelProbability.config(font=("Courier", 20), fg="black")
-        app.labelProbability.place(x=220, y=180)
+        app.labelProbability.config(font=("Arial", 20), fg="black")
+        app.labelProbability.place(x=500, y=180)
 
         app.noise_probability = Entry(root)
         app.noise_probability.pack()
         app.noise_probability.focus_set()
-        app.noise_probability.insert(0, '0')
-        app.noise_probability.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
-        app.noise_probability.place(x=400, y=180)
+        app.noise_probability.insert(0, '0.0')
+        app.noise_probability.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+        app.noise_probability.place(x=625, y=180)
 
         app.t = Button(root, text='Add noise', fg='white', command=lambda: app.saltpepper(app.noise_probability))
-        app.t.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-        app.t.place(x=650, y=180, anchor=N)
+        app.t.config(font=("Arial", 22), fg="#313131", bd="10px", relief="raised")
+        app.t.place(x=850, y=180, anchor=N)
         print(a.get())
 
     elif x == "Exponential":
-        # app.noise_mean.destroy()
-        # app.noise_variance.destroy()
-        # app.noise_probability.destroy()
+        app.noise_mean.destroy()
+        app.noise_variance.destroy()
+        app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
 
         a.set("Exponential")
         app.labelMean = Label(root, text='Mean:')
-        app.labelMean.config(font=("Courier", 20), fg="black")
-        app.labelMean.place(x=220, y=180)
+        app.labelMean.config(font=("Arial", 20), fg="black")
+        app.labelMean.place(x=400, y=180)
 
         app.noise_mean = Entry(root)
         app.noise_mean.pack()
         app.noise_mean.focus_set()
         app.noise_mean.insert(0, '0')
-        app.noise_mean.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
-        app.noise_mean.place(x=300, y=180)
+        app.noise_mean.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+        app.noise_mean.place(x=475, y=180)
 
         app.labelVariance = Label(root, text='Variance:')
-        app.labelVariance.config(font=("Courier", 20), fg="black")
-        app.labelVariance.place(x=380, y=180)
+        app.labelVariance.config(font=("Arial", 20), fg="black")
+        app.labelVariance.place(x=550, y=180)
 
         app.noise_variance = Entry(root)
         app.noise_variance.pack()
         app.noise_variance.focus_set()
         app.noise_variance.insert(0, '0')
-        app.noise_variance.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
-        app.noise_variance.place(x=500, y=180)
+        app.noise_variance.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+        app.noise_variance.place(x=650, y=180)
 
         app.t = Button(root, text='Add noise', fg='white', command=lambda: app.exponentialNoise())
-        app.t.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
-        app.t.place(x=650, y=180, anchor=N)
+        app.t.config(font=("Arial", 22), fg="#313131", bd="10px", relief="raised")
+        app.t.place(x=850, y=180, anchor=N)
         print(a.get())
 
 
-o = OptionMenu(root, oc,  "gaussian", "saltandPepper", "Exponential", command=Noise_Select_function)
+o = OptionMenu(root, oc,  "Gaussian", "Salt and pepper", "Exponential", command=select_noise)
+o.config(font=("Arial", 20), fg="#313131", bd="10px", relief="raised")
 z = a.get()
 print(z)
 
 # GUI Header
 txt = Label(root, text='Image Restoration')
-txt.config(font=("Courier", 32), fg="white", bg="#313131", bd="5px", relief="raised")
-
+txt.config(font=("Arial", 32), fg="white", bg="#0000ff", bd="5px", relief="raised")
 txt.place(x=10, y=30)
 #old val was 590 for x then 390 now 100
-o.place(x=150, y=180, anchor=N)
+o.place(x=200, y=180)
+
 # app.file.pack(side=LEFT  ,padx=(0, 0))
 # app.choose.pack(side=LEFT)
 app.label.place(x=100, y=310)
-
 app.panel.place(x=710, y=310)
 app.denoised_img.place(x=410,y=570)
-can = Button(root, text='Upload Image',fg='white',command=app.choose)
 
+can = Button(root, text='Upload Image', command=app.choose)
 # can.bind("<Button-1>", app.choose)
+can.config(font=("Arial", 20), fg="#313131", bd="10px", relief="raised")
+can.place(x=200, y=120)
+# can = Button(root, text='Reset', fg='white', command=app.choose)     Does reset do anything right now?
+# # can.bind("<Button-1>", app.choose)
+# can.config(font=("Arial", 20), fg="#313131", bd="10px", relief="raised")
+# can.place(x=400, y=120, anchor=N)
 
-can.config(font=("Courier", 32), fg="#313131", bd="5px", relief="raised")
-can.place(x=200, y=120, anchor=N)
-can = Button(root, text='Reset',fg='white',command=app.choose)
-
-# can.bind("<Button-1>", app.choose)
-
-can.config(font=("Courier", 32), fg="#313131", bd="5px", relief="raised")
-can.place(x=400, y=120, anchor=N)
 var = IntVar()
 # R1 = Radiobutton(root, text="Option 1", variable=var, value=1,
 #                   command="dd")
