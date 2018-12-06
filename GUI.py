@@ -12,7 +12,6 @@ matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 from Filtering.Filtering import Filtering
 sys.path.append('Restoration_DIP/Filtering')
-import math
 
 
 class GUI(Frame):
@@ -23,6 +22,24 @@ class GUI(Frame):
         master.minsize(width=w, height=h)
         master.maxsize(width=2000, height=2000)
         self.place()
+        self.labelMean = Label(root, text='Mean:')
+        self.labelVariance = Label(root, text='Variance:')
+        self.labelProbability = Label(root, text='Probability')
+        self.file = Button(self, text='Browse', command=self.choose)
+        self.image = PhotoImage(file='images/placeholder_new.png').subsample(3)
+        self.label = Label(image=self.image)
+        self.panel = Label(image="")
+        self.denoised_img = Label(image="")
+        self.mp_window_size = Entry(root)
+        self.ch_window_size = Entry(root)
+        self.qpara = Entry(root)
+        self.t = Button()
+        self.cans = Button()
+        self.alnf_can = Button()
+        self.adpwindow_size = Entry(root)
+        self.hm_window_size = Entry(root)
+        self.hmcans = Button()
+
         global flag
         global window_size
         global mp_window_size
@@ -39,31 +56,9 @@ class GUI(Frame):
         global t
         global txt # label for all the hint
         global path
-
-        self.labelMean = Label(root, text='Mean:')
-        self.labelVariance = Label(root, text='Variance:')
-        self.labelProbability = Label(root, text='Probability')
-        self.noise_mean = Entry(root)
-        self.noise_variance = Entry(root)
-        self.noise_probability = Entry(root)
-
         mp = 1
         ch = 1
         flag = 0
-        self.file = Button(self, text='Browse', command=self.choose)
-        self.image = PhotoImage(file='images/placeholder_new.png').subsample(3)
-        self.label = Label(image=self.image)
-        self.panel = Label(image="")
-        self.denoised_img = Label(image="")
-        self.mp_window_size = Entry(root)
-        self.ch_window_size = Entry(root)
-        self.qpara = Entry(root)
-        self.t = Button()
-        self.cans = Button()
-        self.alnf_can = Button()
-        self.adpwindow_size = Entry(root)
-        self.hm_window_size = Entry(root)
-        self.hmcans = Button()
         root.configure(background='#ffffff')
 
     def reset(self):
@@ -85,79 +80,79 @@ class GUI(Frame):
         flag = 0
         print("FLAG VAL for upload", flag)
 
-    def blur_image(self):
-        print(path)
-        cvimg = cv2.imread(path)
+    # def blur_image(self):
+    #     print(path)
+    #     cvimg = cv2.imread(path)
+    #
+    #     cv_img = cv2.blur(cvimg, (3, 3))
+    #     print(cv_img)
+    #     self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(cv_img))
+    #     # self.panel = Label(root, image=self.photo)
+    #     self.panel.configure(image=self.photo,width=360,height=240)
+    #
+    #     self.panel.image = self.photo
+    #     flag = 1
 
-        cv_img = cv2.blur(cvimg, (3, 3))
-        print(cv_img)
-        self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(cv_img))
-        # self.panel = Label(root, image=self.photo)
-        self.panel.configure(image=self.photo,width=360,height=240)
 
-        self.panel.image = self.photo
-        flag = 1
+    # def gaussian_noise_add(self):
+    #     cvimg = cv2.imread(path,0)
+    #     img = cv2.resize(cvimg, (250, 250))
+    #     mean = 0
+    #     variance = 3
+    #     prob_noise = 0.10
+    #     height, width = img.shape[:2]
+    #     num_noise_pixels = height * width * prob_noise
+    #     noise_array = np.zeros(256, np.uint)
+    #     noise_mat = np.zeros(shape=(img.shape[0], img.shape[1]), dtype=np.uint8)
+    #     for i in range(0, 256):
+    #         fx = 1 / math.sqrt(2 * math.pi * (variance)) * math.exp(- ((i - mean) ** 2) / (2 * variance))
+    #         noise_array[i] = int(fx * num_noise_pixels + 0.5)
+    #         # print(noise_array)
+    #     num_noise_pixels = 0
+    #
+    #     for i in range(256):
+    #         num_noise_pixels += noise_array[i]
+    #
+    #     for i in range(0, img.shape[1]):
+    #         for j in range(0, img.shape[0]):
+    #             noise_random = random.randint(0, 99)  # randomly decide whether to add noise or not
+    #             if noise_random / 99 < prob_noise:
+    #                 index = random.randint(0, 255)  # randomly decide a noise value to add to noise matrix
+    #                 while True:
+    #
+    #                     if num_noise_pixels == 0:
+    #                         break
+    #                     if noise_array[index] > 0:
+    #                         noise_mat[i][j] = index
+    #                         noise_array[index] -= 1
+    #                         num_noise_pixels -= 1
+    #
+    #                         break
+    #                     else:
+    #                         index += 1
+    #                         if index == 256:
+    #                             index = 0
+    #     img = img + noise_mat
+    #     flag = 2
+    #
+    #     self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(img))
+    #     panel = Label(root, image=self.photo, width=360, height=240)
+    #     self.panel.configure(image=self.photo, width=250, height=250)
+    #     n_img = np.array(img, dtype=np.uint8)
+    #     cv2.imwrite("images/noisy_img_DIP.jpg",n_img)
+    #     if (flag != 0):
+    #         print("FLAG VAL", flag)
+    #
+    #         set_Filter()
+    #         gauss_arrow()
+    #     return img
 
-
-    def gaussian_noise_add(self):
-        cvimg = cv2.imread(path,0)
-        img = cv2.resize(cvimg, (250, 250))
-        mean = 0
-        variance = 3
-        prob_noise = 0.10
-        height, width = img.shape[:2]
-        num_noise_pixels = height * width * prob_noise
-        noise_array = np.zeros(256, np.uint)
-        noise_mat = np.zeros(shape=(img.shape[0], img.shape[1]), dtype=np.uint8)
-        for i in range(0, 256):
-            fx = 1 / math.sqrt(2 * math.pi * (variance)) * math.exp(- ((i - mean) ** 2) / (2 * variance))
-            noise_array[i] = int(fx * num_noise_pixels + 0.5)
-            # print(noise_array)
-        num_noise_pixels = 0
-
-        for i in range(256):
-            num_noise_pixels += noise_array[i]
-
-        for i in range(0, img.shape[1]):
-            for j in range(0, img.shape[0]):
-                noise_random = random.randint(0, 99)  # randomly decide whether to add noise or not
-                if noise_random / 99 < prob_noise:
-                    index = random.randint(0, 255)  # randomly decide a noise value to add to noise matrix
-                    while True:
-
-                        if num_noise_pixels == 0:
-                            break
-                        if noise_array[index] > 0:
-                            noise_mat[i][j] = index
-                            noise_array[index] -= 1
-                            num_noise_pixels -= 1
-
-                            break
-                        else:
-                            index += 1
-                            if index == 256:
-                                index = 0
-        img = img + noise_mat
-        flag = 2
-
-        self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(img))
-        panel = Label(root, image=self.photo, width=360, height=240)
-        self.panel.configure(image=self.photo, width=250, height=250)
-        n_img = np.array(img, dtype=np.uint8)
-        cv2.imwrite("images/noisy_img_DIP.jpg",n_img)
-        if (flag != 0):
-            print("FLAG VAL", flag)
-
-            set_Filter()
-            gauss_arrow()
-        return img
-
-    def gauss(self):
+    def gauss(self, mean_parameter, variance_parameter):
         cvimg = cv2.imread(path,0)
         img = cv2.resize(cvimg, (250, 250))
         row, col = img.shape
-        mean = 0
-        var = 10
+        mean = int(mean_parameter.get())   # 0
+        var = int(variance_parameter.get()) # 10
         sigma = var ** 0.5
         gauss = np.random.normal(mean, var, (row, col))
         print(gauss.shape)
@@ -183,10 +178,10 @@ class GUI(Frame):
             gauss_arrow()
         return noisy
 
-    def saltpepper(self):
+    def saltpepper(self, probability_param):
         image = cv2.imread(path, 0)
         image = cv2.resize(image, (250, 250))
-        prob = 0.2
+        prob = probability_param    # was 0.2
         thres = 1 - prob
         for i in range(0, image.shape[0]):
             for j in range(0, image.shape[1]):
@@ -211,31 +206,24 @@ class GUI(Frame):
             sp_arrow()
 
     def exponentialNoise(self):
-        image = cv2.imread(path,0)
+        image = cv2.imread(path, 0)
         image = cv2.resize(image, (250, 250))
-
-
         row, col = image.shape
         exponen = np.random.exponential(scale=3, size=(row, col))
-
         image = image + exponen
-
         noisy = np.array(image, dtype=np.uint8)
         self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(noisy))
         self.panel.configure(image=self.photo, width=250, height=250)
         flag = 4
-
         cv2.imwrite("images/noisy_img_DIP.jpg", noisy)
         if (flag != 0):
             print("FLAG VAL", flag)
-
             set_Filter()
             exp_arrow()
         return noisy
 
 
 def alpha_trimmed_filter_params():
-
     atrim = 1
     if atrim != 0 or mp == 0:
         app.mp_window_size.destroy()
@@ -270,6 +258,7 @@ def alpha_trimmed_filter_params():
     app.qpara.bind("<Button-1>", alphatrim_callback_d)
 
 
+# Main
 root = Tk()
 app = GUI(master=root)
 m = root.maxsize()
@@ -322,17 +311,12 @@ def alphatrim_callback_d(event): # note that you must include the event as an ar
 def adativelnf_params():
     print("adaptivelnf_params called")
     adp = 1
-    if(adp != 0):
+    if adp != 0:
         app.ch_window_size.destroy()
         app.qpara.destroy()
-        app.t.destroy()
         app.mp_window_size.destroy()
         app.hm_window_size.destroy()
         app.cans.destroy()
-
-        # app.mp_window_size.update()
-        # app.adpwindow_size.destroy()
-        # app.alnf_can.destroy()
         app.hmcans.destroy()
 
     app.adpwindow_size = Entry(root,bd=1)
@@ -384,7 +368,7 @@ def harmonic_mean_filter_params():
     if hm != 0:
         app.ch_window_size.destroy()
         app.qpara.destroy()
-        app.t.destroy()
+        # app.t.destroy()
         app.adpwindow_size.destroy()
         app.mp_window_size.destroy()
         app.cans.destroy()
@@ -392,13 +376,10 @@ def harmonic_mean_filter_params():
     app.hm_window_size = Entry(root)
     app.hm_window_size.pack()
     app.hm_window_size.focus_set()
-
     app.hm_window_size.config(font=("Courier", 18), fg="#313131", bd="2px")
     app.hm_window_size.place(x=500, y=240, anchor=N)
     app.hm_window_size.insert(0, 'Enter Window size')
-
-    app.hmcans = Button(root, text='Apply Filter', fg='white',
-                      command=lambda: create_harmonic_filter_window(app.hm_window_size))
+    app.hmcans = Button(root, text='Apply Filter', fg='white',                      command=lambda: create_harmonic_filter_window(app.hm_window_size))
     app.hmcans.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
     app.hmcans.place(x=760, y=240)
     app.hm_window_size.bind("<Button-1>", hm_callback)
@@ -416,8 +397,6 @@ def create_adaptive_noisereduce_filter_window(window_size):
         print("print window size",int(window_size.get()))
         result = test.adaptive_median_filter(input_image,int(window_size.get()))
         # cv2.imshow("Denoised_Image", result)
-
-
         app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
         app.denoised_img.configure(image=app.photos, width=200, height=200)
         stringss = window_size.get()
@@ -433,7 +412,6 @@ def create_midpoint_filter_window(window_size):
     print("print window size", int(window_size.get()))
     result = test.midpoint_filter(input_image, int(window_size.get()))
     # cv2.imshow("Denoised_Image", result)
-
     app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
     app.denoised_img.configure(image=app.photos, width=200, height=200)
     stringss = window_size.get()
@@ -449,7 +427,6 @@ def create_harmonic_filter_window(window_size):
     print("print window size", int(window_size.get()))
     result = test.harmonic_mean_filter(input_image, int(window_size.get()))
     # cv2.imshow("Denoised_Image", result)
-
     app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
     app.denoised_img.configure(image=app.photos, width=200, height=200)
 
@@ -461,7 +438,6 @@ def create_alpha_trimmed_filter_window(ch_window_size,qpara):
     print("print window size", int(ch_window_size.get()))
     result = test.alpha_trimmed_filter(input_image,d=int(qpara.get()), window_size = int(ch_window_size.get()))
     # cv2.imshow("Denoised_Image", result)
-
     app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
     app.denoised_img.configure(image=app.photos, width=200, height=200)
     stringss = ch_window_size.get()
@@ -471,9 +447,7 @@ def create_alpha_trimmed_filter_window(ch_window_size,qpara):
 
 
 def set_Filter():
-
     filter_select_menu = OptionMenu(root, fil, "harmonic mean filter", "alpha_trimmed_filter", "adaptive_local_noise_reduction_filter", "midpoint_filter", command=Filter_Select_function)
-
     filter_select_menu.config(font=("Courier", 14), fg="#313131", bd="5px", relief="raised")
     filter_select_menu.place(x=160, y=240, anchor=N)
 
@@ -487,7 +461,6 @@ def sp_arrow():
 
 def exp_arrow():
     root.spimage = PhotoImage(file='images/icons8-arrow-480-exp.png').subsample(2)
-
     # root.spimage = PhotoImage(image=np.array(cvimg)).subsample(3)
     root.splbl = Label(image=root.spimage, state='normal', bg="#313131", relief="flat")
     root.splbl.place(x=540, y=310, anchor=N)
@@ -495,19 +468,15 @@ def exp_arrow():
 
 def gauss_arrow():
     root.spimage = PhotoImage(file='images/icons8-arrow-480-transp.png').subsample(2)
-
     # root.spimage = PhotoImage(image=np.array(cvimg)).subsample(3)
     root.splbl = Label(image=root.spimage, state='normal', bg="#313131", relief="flat")
     root.splbl.place(x=540, y=310, anchor=N)
-
     root.splbl['bg'] = '#313131'
 
 
 def Filter_Select_function(x):
-
     if x == "default":
         fil_b.set("default")
-
         print(fil_b.get())
     elif x == "harmonic mean filter":
         fil_b.set("harmonic mean filter")
@@ -533,18 +502,18 @@ def Filter_Select_function(x):
 # when you click certain noise from drop down in comes here
 def Noise_Select_function(x):
     if x == "default":
-        app.noise_mean.destroy()
-        app.noise_variance.destroy()
-        app.noise_probability.destroy()
+        # app.noise_mean.destroy()
+        # app.noise_variance.destroy()
+        # app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
         a.set("default")
         print(a.get())
     elif x == "gaussian":
-        app.noise_mean.destroy()
-        app.noise_variance.destroy()
-        app.noise_probability.destroy()
+        # app.noise_mean.destroy()
+        # app.noise_variance.destroy()
+        # app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
@@ -572,15 +541,15 @@ def Noise_Select_function(x):
         app.noise_variance.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
         app.noise_variance.place(x=500, y=180)
 
-        app.t = Button(root, text='Add noise', fg='white', command=lambda: app.gauss())
+        app.t = Button(root, text='Add noise', fg='white', command=lambda: app.gauss(app.noise_mean, app.noise_variance))
         app.t.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
         app.t.place(x=650, y=180, anchor=N)
         print(a.get())
 
     elif x == "saltandPepper":
-        app.noise_mean.destroy()
-        app.noise_variance.destroy()
-        app.noise_probability.destroy()
+        # app.noise_mean.destroy()
+        # app.noise_variance.destroy()
+        # app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
@@ -597,15 +566,15 @@ def Noise_Select_function(x):
         app.noise_probability.config(font=("Courier", 20), fg="#313131", bd="2px", width=3)
         app.noise_probability.place(x=400, y=180)
 
-        app.t = Button(root, text='Add noise', fg='white', command=lambda: app.saltpepper())
+        app.t = Button(root, text='Add noise', fg='white', command=lambda: app.saltpepper(app.noise_probability))
         app.t.config(font=("Courier", 22), fg="#313131", bd="5px", relief="raised")
         app.t.place(x=650, y=180, anchor=N)
         print(a.get())
 
     elif x == "Exponential":
-        app.noise_mean.destroy()
-        app.noise_variance.destroy()
-        app.noise_probability.destroy()
+        # app.noise_mean.destroy()
+        # app.noise_variance.destroy()
+        # app.noise_probability.destroy()
         app.labelMean['text'] = ''
         app.labelVariance['text'] = ''
         app.labelProbability['text'] = ''
