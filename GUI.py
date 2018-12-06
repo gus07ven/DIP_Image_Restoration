@@ -27,6 +27,7 @@ class GUI(Frame):
         self.labelProbability = Label(root, text='Probability')
         self.labelWindowSize = Label(root, text='Window size:')
         self.labelDParam = Label(root, text='D:')
+        self.labelQParam = Label(root, text='Q:')
         self.file = Button(self, text='Browse', command=self.choose)
         self.image = PhotoImage(file='images/placeholder_new.png').subsample(3)
         self.label = Label(image=self.image)
@@ -80,84 +81,15 @@ class GUI(Frame):
         img = Image.open(path)
         img = img.resize((250, 250), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
-        # self.image2 = PhotoImage(file=path)
         self.image2 = img
-
         self.label.configure(image=img)
         self.label.image=img
         flag = 0
         print("FLAG VAL for upload", flag)
 
-    # def blur_image(self):
-    #     print(path)
-    #     cvimg = cv2.imread(path)
-    #
-    #     cv_img = cv2.blur(cvimg, (3, 3))
-    #     print(cv_img)
-    #     self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(cv_img))
-    #     # self.panel = Label(root, image=self.photo)
-    #     self.panel.configure(image=self.photo,width=360,height=240)
-    #
-    #     self.panel.image = self.photo
-    #     flag = 1
-
-
-    # def gaussian_noise_add(self):
-    #     cvimg = cv2.imread(path,0)
-    #     img = cv2.resize(cvimg, (250, 250))
-    #     mean = 0
-    #     variance = 3
-    #     prob_noise = 0.10
-    #     height, width = img.shape[:2]
-    #     num_noise_pixels = height * width * prob_noise
-    #     noise_array = np.zeros(256, np.uint)
-    #     noise_mat = np.zeros(shape=(img.shape[0], img.shape[1]), dtype=np.uint8)
-    #     for i in range(0, 256):
-    #         fx = 1 / math.sqrt(2 * math.pi * (variance)) * math.exp(- ((i - mean) ** 2) / (2 * variance))
-    #         noise_array[i] = int(fx * num_noise_pixels + 0.5)
-    #         # print(noise_array)
-    #     num_noise_pixels = 0
-    #
-    #     for i in range(256):
-    #         num_noise_pixels += noise_array[i]
-    #
-    #     for i in range(0, img.shape[1]):
-    #         for j in range(0, img.shape[0]):
-    #             noise_random = random.randint(0, 99)  # randomly decide whether to add noise or not
-    #             if noise_random / 99 < prob_noise:
-    #                 index = random.randint(0, 255)  # randomly decide a noise value to add to noise matrix
-    #                 while True:
-    #
-    #                     if num_noise_pixels == 0:
-    #                         break
-    #                     if noise_array[index] > 0:
-    #                         noise_mat[i][j] = index
-    #                         noise_array[index] -= 1
-    #                         num_noise_pixels -= 1
-    #
-    #                         break
-    #                     else:
-    #                         index += 1
-    #                         if index == 256:
-    #                             index = 0
-    #     img = img + noise_mat
-    #     flag = 2
-    #
-    #     self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(img))
-    #     panel = Label(root, image=self.photo, width=360, height=240)
-    #     self.panel.configure(image=self.photo, width=250, height=250)
-    #     n_img = np.array(img, dtype=np.uint8)
-    #     cv2.imwrite("images/noisy_img_DIP.jpg",n_img)
-    #     if (flag != 0):
-    #         print("FLAG VAL", flag)
-    #
-    #         set_Filter()
-    #         gauss_arrow()
-    #     return img
-
     def gauss(self, mean_parameter, variance_parameter):
         global path
-        cvimg = cv2.imread(path,0)
+        cvimg = cv2.imread(path, 0)
         img = cv2.resize(cvimg, (250, 250))
         row, col = img.shape
         mean = int(mean_parameter.get())   # 0
@@ -233,57 +165,11 @@ class GUI(Frame):
             exp_arrow()
         return noisy
 
-
-def alpha_trimmed_filter_params():
-    atrim = 1
-    if atrim != 0 or mp == 0:
-        app.mp_window_size.destroy()
-        app.mp_window_size.update()
-        app.cans.destroy()
-        app.adpwindow_size.destroy()
-        app.alnf_can.destroy()
-        app.hm_window_size.destroy()
-        app.hmcans.destroy()
-        app.labelWindowSize['text'] = ''
-        app.labelDParam['text'] = ''
-
-    app.labelWindowSize = Label(root, text='Window Size:')
-    app.labelWindowSize.config(font=("Arial", 20), fg="black")
-    app.labelWindowSize.place(x=500, y=240)
-
-    print("alpha_Trimmed_params called")
-    app.ch_window_size = Entry(root)
-    app.ch_window_size.pack()
-    app.ch_window_size.focus_set()
-    app.ch_window_size.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
-    app.ch_window_size.place(x=650, y=240)
-    app.ch_window_size.insert(0, '0')
-
-    app.labelWindowSize = Label(root, text='D:')
-    app.labelWindowSize.config(font=("Arial", 20), fg="black")
-    app.labelWindowSize.place(x=725, y=240)
-
-    print("atrim", atrim)
-    print("mp in atrim", mp)
-    app.qpara = Entry(root)
-    app.qpara.pack()
-    app.qpara.focus_set()
-    app.qpara.insert(0, '0')
-    app.qpara.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
-    app.qpara.place(x=775, y=240)
-
-    app.t = Button(root, text='Apply Filter', fg='white',
-                   command=lambda: create_alpha_trimmed_filter_window(app.ch_window_size, app.qpara))
-    app.t.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
-    app.t.place(x=850, y=240)
-    app.ch_window_size.bind("<Button-1>", alphatrim_callback_ch)
-    app.qpara.bind("<Button-1>", alphatrim_callback_d)
-
-
 # Main
 root = Tk()
 app = GUI(master=root)
 m = root.maxsize()
+
 root.geometry('{}x{}+0+0'.format(*m))
 root.title("IUF18 Image Restorer")
 
@@ -293,22 +179,12 @@ a.set("default")
 fil_b = StringVar()
 fil_b.set("default")
 fil_b = StringVar()
+
 oc = StringVar(root)
 oc.set("Select Noise")
 
 fil = StringVar(root)
 fil.set("Select Filter")
-# def on_entry_click(self):
-#     """function that gets called whenever entry is clicked"""
-#     if self.adpwindow_size.get() == 'Enter Window size':
-#         print("enter window size clicked")
-#         self.adpwindow_size.delete(0, "end") # delete all the text in the entry
-#         self.adpwindow_size.insert(0, '') #Insert blank for user input
-#         self.adpwindow_size.config(fg = 'black')
-# def on_focusout(self):
-#     if self.adpwindow_size.get() == '':
-#         self.adpwindow_size.insert(0, app.adpwindow_size.get())
-#         self.adpwindow_size.config(fg = '#313131')
 
 
 def adp_callback(event): # note that you must include the event as an arg, even if you don't use it.
@@ -331,49 +207,74 @@ def alphatrim_callback_d(event): # note that you must include the event as an ar
     return None
 
 
-def adaptivelnf_params():
-    print("adaptivelnf_params called")
-    adp = 1
-    if adp != 0:
-        app.ch_window_size.destroy()
-        app.qpara.destroy()
+def alpha_trimmed_filter_params(filter_name):
+    atrim = 1
+    if atrim != 0 or mp == 0:
         app.mp_window_size.destroy()
-        app.hm_window_size.destroy()
+        app.mp_window_size.update()
         app.cans.destroy()
+        app.adpwindow_size.destroy()
+        app.alnf_can.destroy()
+        app.hm_window_size.destroy()
         app.hmcans.destroy()
         app.labelWindowSize['text'] = ''
+        app.labelDParam['text'] = ''
+        app.labelQParam['text'] = ''
+        app.qpara.destroy()
 
     app.labelWindowSize = Label(root, text='Window Size:')
     app.labelWindowSize.config(font=("Arial", 20), fg="black")
     app.labelWindowSize.place(x=500, y=240)
-    app.adpwindow_size = Entry(root, bd=1)
-    app.adpwindow_size.pack()
-    app.adpwindow_size.focus_set()
 
-    app.adpwindow_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
-    app.adpwindow_size.insert(0, '0')
-    app.adpwindow_size.place(x=650, y=240, anchor=N)
-    app.adpwindow_size.bind("<Button-1>", adp_callback)
+    print("alpha_Trimmed_params called")
+    app.ch_window_size = Entry(root)
+    app.ch_window_size.pack()
+    app.ch_window_size.focus_set()
+    app.ch_window_size.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+    app.ch_window_size.place(x=650, y=240)
+    app.ch_window_size.insert(0, '0')
 
-    app.alnf_can = Button(root, text='Apply Filter', fg='white', command=lambda: create_adaptive_noisereduce_filter_window(app.adpwindow_size))
-    app.alnf_can.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
-    app.alnf_can.place(x=850, y=240)
+    if filter_name == 'Alpha trimmed':
+        app.labelDParam = Label(root, text='D:')
+        app.labelDParam.config(font=("Arial", 20), fg="black")
+        app.labelDParam.place(x=725, y=240)
+    elif filter_name == 'Contraharmonic mean':
+        app.labelQParam = Label(root, text='Q:')
+        app.labelQParam.config(font=("Arial", 20), fg="black")
+        app.labelQParam.place(x=725, y=240)
+
+    print("atrim", atrim)
+    print("mp in atrim", mp)
+    app.qpara = Entry(root)
+    app.qpara.pack()
+    app.qpara.focus_set()
+    app.qpara.insert(0, '0')
+    app.qpara.config(font=("Arial", 20), fg="#313131", bd="2px", width=3)
+    app.qpara.place(x=775, y=240)
+
+    app.t = Button(root, text='Apply Filter', fg='white',
+                   command=lambda: create_alpha_trimmed_filter_window(app.ch_window_size, app.qpara))
+    app.t.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
+    app.t.place(x=850, y=240)
+    app.ch_window_size.bind("<Button-1>", alphatrim_callback_ch)
+    app.qpara.bind("<Button-1>", alphatrim_callback_d)
 
 
-def midpoint_filter_params():
+def get_filter_parameters(filter_name):
     print("midpoint_filter_params called")
     mp = 1
 
     if mp != 0:
         app.ch_window_size.destroy()
         app.qpara.destroy()
-        # app.t.destroy()
         app.adpwindow_size.destroy()
         app.hm_window_size.destroy()
         app.adpwindow_size.destroy()
         app.alnf_can.destroy()
         app.hmcans.destroy()
         app.labelWindowSize['text'] = ''
+        app.labelQParam['text'] = ''
+        app.labelDParam['text'] = ''
 
     app.labelWindowSize = Label(root, text='Window Size:')
     app.labelWindowSize.config(font=("Arial", 20), fg="black")
@@ -386,67 +287,11 @@ def midpoint_filter_params():
     app.mp_window_size.place(x=650, y=240)
     app.mp_window_size.insert(0, '0')
 
-    app.cans = Button(root, text='Apply Filter', fg='white', command=lambda: create_midpoint_filter_window(app.mp_window_size))
+    app.cans = Button(root, text='Apply Filter', fg='white',
+                      command=lambda: create_filter_window(app.mp_window_size, filter_name))
     app.cans.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
     app.cans.place(x=850, y=240)
     app.mp_window_size.bind("<Button-1>", mp_callback)
-
-
-def harmonic_mean_filter_params():
-    print("harmonic_mean_filter_params called")
-    hm = 1
-
-    if hm != 0:
-        app.ch_window_size.destroy()
-        app.qpara.destroy()
-        # app.t.destroy()
-        app.adpwindow_size.destroy()
-        app.mp_window_size.destroy()
-        app.cans.destroy()
-        app.labelWindowSize['text'] = ''
-
-    app.labelWindowSize = Label(root, text='Window Size:')
-    app.labelWindowSize.config(font=("Arial", 20), fg="black")
-    app.labelWindowSize.place(x=500, y=240)
-    app.hm_window_size = Entry(root)
-    app.hm_window_size.pack()
-    app.hm_window_size.focus_set()
-    app.hm_window_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
-    app.hm_window_size.place(x=650, y=240)
-    app.hm_window_size.insert(0, '0')
-    app.hmcans = Button(root, text='Apply Filter', fg='white',
-                        command=lambda: create_harmonic_filter_window(app.hm_window_size))
-    app.hmcans.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
-    app.hmcans.place(x=850, y=240)
-    app.hm_window_size.bind("<Button-1>", hm_callback)
-
-
-def adaptive_median_filter_params():
-    print("adaptive_median_filter_params called")
-    hm = 1
-
-    if hm != 0:
-        app.ch_window_size.destroy()
-        app.qpara.destroy()
-        app.adpwindow_size.destroy()
-        app.mp_window_size.destroy()
-        app.cans.destroy()
-        app.labelWindowSize['text'] = ''
-
-    app.labelWindowSize = Label(root, text='Window Size:')
-    app.labelWindowSize.config(font=("Arial", 20), fg="black")
-    app.labelWindowSize.place(x=500, y=240)
-    app.hm_window_size = Entry(root)
-    app.hm_window_size.pack()
-    app.hm_window_size.focus_set()
-    app.hm_window_size.config(font=("Arial", 18), fg="#313131", bd="2px", width=3)
-    app.hm_window_size.place(x=650, y=240)
-    app.hm_window_size.insert(0, '0')
-    app.hmcans = Button(root, text='Apply Filter', fg='white',
-                        command=lambda: create_adaptive_median_filter_window(app.hm_window_size))
-    app.hmcans.config(font=("Arial", 22), fg="#313131", bd="5px", relief="raised")
-    app.hmcans.place(x=850, y=240)
-    app.hm_window_size.bind("<Button-1>", hm_callback)
 
 
 def hm_callback(event):
@@ -454,56 +299,45 @@ def hm_callback(event):
     return None
 
 
-def create_adaptive_noisereduce_filter_window(window_size):
-        img = 'images/noisy_img_DIP.jpg'
-        input_image = cv2.imread(img, 0)
-        test = Filtering(input_image)
-        print("print window size",int(window_size.get()))
-        result = test.adaptive_median_filter(input_image,int(window_size.get()))
-        # cv2.imshow("Denoised_Image", result)
-        app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
-        app.denoised_img.configure(image=app.photos, width=200, height=200)
-        stringss = window_size.get()
-        print(int(stringss))
-        stringss = window_size.get()
-        print(int(stringss))
-
-
-def create_midpoint_filter_window(window_size):
+def create_filter_window(window_size, filter_name):
     img = 'images/noisy_img_DIP.jpg'
     input_image = cv2.imread(img, 0)
     test = Filtering(input_image)
     print("print window size", int(window_size.get()))
-    result = test.midpoint_filter(input_image, int(window_size.get()))
+    if filter_name == "Adaptive median":
+        print("Result is adaptive median")
+        result = test.adaptive_median_filter(input_image, int(window_size.get()))
+    if filter_name == "Arithmetic mean":
+        print("Result is arithmetic mean")
+        result = test.arithmetic_mean_filter(input_image, int(window_size.get()))
+    if filter_name == "Contraharmonic mean":
+        print("Result is contraharmonic mean")
+        result = test.contraharmonic_mean_filter(input_image, int(q_param.get()), int(window_size.get()))
+    if filter_name == "Geometric mean":
+        print("Result is geometric mean")
+        result = test.geometric_mean_filter(input_image, int(window_size.get()))
+    if filter_name == "Harmonic mean":
+        print("Result is harmonic mean")
+        result = test.harmonic_mean_filter(input_image, int(window_size.get()))
+    if filter_name == "Max":
+        print("Result is max")
+        result = test.max_filter(input_image, int(window_size.get()))
+    if filter_name == "Median":
+        print("Result is median")
+        result = test.median_filter(input_image, int(window_size.get()))
+    if filter_name == "Midpoint":
+        print("Result is midpoint")
+        result = test.midpoint_filter(input_image, int(window_size.get()))
+    if filter_name == "Min":
+        print("Result is min")
+        result = test.min_filter(input_image, int(window_size.get()))
     # cv2.imshow("Denoised_Image", result)
     app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
-    app.denoised_img.configure(image=app.photos, width=200, height=200)
+    app.denoised_img.configure(image=app.photos, width=250, height=250)
     stringss = window_size.get()
     print(int(stringss))
     stringss = window_size.get()
     print(int(stringss))
-
-
-def create_harmonic_filter_window(window_size):
-    img = 'images/noisy_img_DIP.jpg'
-    input_image = cv2.imread(img, 0)  # Have to read noise image
-    test = Filtering(input_image)
-    print("print window size", int(window_size.get()))
-    result = test.harmonic_mean_filter(input_image, int(window_size.get()))
-    # cv2.imshow("Denoised_Image", result)
-    app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
-    app.denoised_img.configure(image=app.photos, width=200, height=200)
-
-
-def create_adaptive_median_filter_window(window_size):
-    img = 'images/noisy_img_DIP.jpg'
-    input_image = cv2.imread(img, 0)
-    test = Filtering(input_image)
-    print("print window size", int(window_size.get()))
-    result = test.adaptive_median_filter(input_image, int(window_size.get()))
-    # cv2.imshow("Denoised_Image", result)
-    app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
-    app.denoised_img.configure(image=app.photos, width=200, height=200)
 
 
 def create_alpha_trimmed_filter_window(ch_window_size, qpara):
@@ -511,10 +345,10 @@ def create_alpha_trimmed_filter_window(ch_window_size, qpara):
     input_image = cv2.imread(img, 0)
     test = Filtering(input_image)
     print("print window size", int(ch_window_size.get()))
-    result = test.alpha_trimmed_filter(input_image,d=int(qpara.get()), window_size = int(ch_window_size.get()))
+    result = test.alpha_trimmed_filter(input_image, d=int(qpara.get()), window_size=int(ch_window_size.get()))
     # cv2.imshow("Denoised_Image", result)
     app.photos = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(result))
-    app.denoised_img.configure(image=app.photos, width=200, height=200)
+    app.denoised_img.configure(image=app.photos, width=250, height=250)
     stringss = ch_window_size.get()
     print(int(stringss))
     stringss = ch_window_size.get()
@@ -523,7 +357,9 @@ def create_alpha_trimmed_filter_window(ch_window_size, qpara):
 
 def set_filter():
     filter_select_menu = OptionMenu(root, fil, "Adaptive median", "Adaptive local noise reduction", "Alpha trimmed",
-                                    "Harmonic mean", "Midpoint", command=select_filter)
+                                    "Arithmetic mean", "Contraharmonic mean", "Geometric mean", "Harmonic mean", "Max",
+                                    "Median", "Midpoint",
+                                    "Min", command=select_filter)
     filter_select_menu.config(font=("Arial", 20), fg="#313131", bd="10px", relief="raised")
     filter_select_menu.place(x=200, y=240)
 
@@ -550,36 +386,25 @@ def gauss_arrow():
     root.splbl['bg'] = '#313131'
 
 
-def select_filter(x):
-    if x == "default":
+def select_filter(filter_type):
+    if filter_type == "default":
         fil_b.set("default")
         print(fil_b.get())
-    elif x == "Adaptive median":
-        fil_b.set("Adaptive median")
-        # app.gauss()
-        adaptive_median_filter_params()
-        print(fil_b.get())
-    elif x == "Harmonic mean":
-        fil_b.set("harmonic mean filter")
-        # app.gauss()
-        harmonic_mean_filter_params()
-        print(fil_b.get())
-    elif x == "Midpoint":
+    elif filter_type == "Midpoint" or filter_type == "Arithmetic mean" \
+            or filter_type == "Geometric mean" or filter_type == "Median" or filter_type == "Max"\
+            or filter_type == "Min" or filter_type == "Midpoint" or filter_type == "Adaptive median"\
+            or filter_type == "Harmonic mean":
         fil_b.set("midpoint_filter")
-        # app.gauss()
-        midpoint_filter_params()
+        get_filter_parameters(filter_type)
         print(fil_b.get())
-    elif x == "Adaptive local noise reduction":
-        fil_b.set("adaptive_local_noisefilter")
-        adaptivelnf_params()
-        print(fil_b.get())
-    elif x == "Alpha trimmed":
+    elif filter_type == "Alpha trimmed" or filter_type == "Contraharmonic mean" \
+            or filter_type == "Adaptive local noise reduction":
         fil_b.set("alpha_trimmed_filter filter")
-        alpha_trimmed_filter_params()
+        alpha_trimmed_filter_params(filter_type)
         print(fil_b.get())
 
 
-# when you click certain noise from drop down in comes here
+# Select noise drop down
 def select_noise(x):
     if x == "default":
         app.labelMean['text'] = ''
